@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>¿Creo o no creo?</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f4f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 580px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #888;
+    }
+
+    .progress-bar {
+      height: 3px;
+      background: #e0deda;
+      border-radius: 2px;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #7F77DD;
+      border-radius: 2px;
+      transition: width 0.35s ease;
+    }
+
+    .word-card {
+      background: #ffffff;
+      border: 1px solid #e8e6e1;
+      border-radius: 20px;
+      padding: 3rem 2rem;
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .word-es {
+      font-size: 38px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .word-en {
+      font-size: 15px;
+      color: #999;
+      font-style: italic;
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 1rem;
+    }
+
+    .big-btn {
+      padding: 16px 0;
+      font-size: 17px;
+      font-weight: 600;
+      border-radius: 14px;
+      border: 1.5px solid #ddd;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      background: #ffffff;
+      color: #1a1a1a;
+    }
+
+    .big-btn:hover {
+      background: #f5f4f0;
+      border-color: #bbb;
+      transform: translateY(-1px);
+    }
+
+    .big-btn.chosen-si {
+      background: #eaf3de;
+      border-color: #639922;
+      color: #27500a;
+    }
+
+    .big-btn.chosen-no {
+      background: #fcebeb;
+      border-color: #a32d2d;
+      color: #501313;
+    }
+
+    .result-box {
+      background: #ffffff;
+      border: 1px solid #e8e6e1;
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+      text-align: center;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-sentence {
+      font-size: 19px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .result-note {
+      font-size: 13px;
+      color: #888;
+    }
+
+    .result-note strong {
+      color: #7F77DD;
+    }
+
+    .nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-btn {
+      padding: 8px 18px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #444;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.12s;
+    }
+
+    .nav-btn:hover { background: #f5f4f0; }
+
+    .counter {
+      font-size: 13px;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>¿Creo o no creo?</h1>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress"></div>
+  </div>
+
+  <div class="word-card">
+    <div class="word-es" id="wordEs"></div>
+    <div class="word-en" id="wordEn"></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="big-btn" id="btnSi" onclick="choose('si')">Creo que sí</button>
+    <button class="big-btn" id="btnNo" onclick="choose('no')">No creo que…</button>
+  </div>
+
+  <div id="resultBox" class="result-box" style="display:none">
+    <div class="result-sentence" id="resultSentence"></div>
+    <div class="result-note" id="resultNote"></div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" onclick="go(-1)">← anterior</button>
+    <span class="counter" id="counter"></span>
+    <button class="nav-btn" onclick="go(1)">siguiente →</button>
+  </div>
+</div>
+
+<script>
+  const words = [
+    { es: "los fantasmas", en: "ghosts",
+      si: "Creo que los fantasmas existen.",
+      no: "No creo que los fantasmas existan.",
+      note: "existir → <strong>existan</strong>" },
+    { es: "dios", en: "God",
+      si: "Creo que dios existe.",
+      no: "No creo que dios exista.",
+      note: "existir → <strong>exista</strong>" },
+    { es: "el amor a primera vista", en: "love at first sight",
+      si: "Creo que el amor a primera vista es real.",
+      no: "No creo que el amor a primera vista sea real.",
+      note: "ser → <strong>sea</strong>" },
+    { es: "los extraterrestres", en: "aliens",
+      si: "Creo que los extraterrestres existen.",
+      no: "No creo que los extraterrestres existan.",
+      note: "existir → <strong>existan</strong>" },
+    { es: "el destino", en: "destiny / fate",
+      si: "Creo que el destino existe.",
+      no: "No creo que el destino exista.",
+      note: "existir → <strong>exista</strong>" },
+    { es: "la suerte", en: "luck",
+      si: "Creo que la suerte existe.",
+      no: "No creo que la suerte exista.",
+      note: "existir → <strong>exista</strong>" },
+    { es: "la magia", en: "magic",
+      si: "Creo que la magia es real.",
+      no: "No creo que la magia sea real.",
+      note: "ser → <strong>sea</strong>" },
+    { es: "los milagros", en: "miracles",
+      si: "Creo que los milagros ocurren.",
+      no: "No creo que los milagros ocurran.",
+      note: "ocurrir → <strong>ocurran</strong>" },
+    { es: "la vida después de la muerte", en: "life after death",
+      si: "Creo que hay vida después de la muerte.",
+      no: "No creo que haya vida después de la muerte.",
+      note: "hay → <strong>haya</strong>" },
+    { es: "la reencarnación", en: "reincarnation",
+      si: "Creo que la reencarnación es posible.",
+      no: "No creo que la reencarnación sea posible.",
+      note: "ser → <strong>sea</strong>" },
+    { es: "el karma", en: "karma",
+      si: "Creo que el karma existe.",
+      no: "No creo que el karma exista.",
+      note: "existir → <strong>exista</strong>" },
+    { es: "los superhéroes", en: "superheroes",
+      si: "Creo que los superhéroes pueden existir.",
+      no: "No creo que los superhéroes puedan existir.",
+      note: "poder → <strong>puedan</strong>" },
+  ];
+
+  let idx = 0;
+  let chosen = null;
+
+  function render() {
+    const w = words[idx];
+    document.getElementById('wordEs').textContent = w.es;
+    document.getElementById('wordEn').textContent = w.en;
+    document.getElementById('counter').textContent = (idx + 1) + ' / ' + words.length;
+    document.getElementById('progress').style.width = (((idx + 1) / words.length) * 100) + '%';
+    document.getElementById('resultBox').style.display = 'none';
+    document.getElementById('btnSi').className = 'big-btn';
+    document.getElementById('btnNo').className = 'big-btn';
+    chosen = null;
+  }
+
+  function choose(ans) {
+    if (chosen) return;
+    chosen = ans;
+    const w = words[idx];
+    document.getElementById('btnSi').className = 'big-btn' + (ans === 'si' ? ' chosen-si' : '');
+    document.getElementById('btnNo').className = 'big-btn' + (ans === 'no' ? ' chosen-no' : '');
+    document.getElementById('resultSentence').textContent = ans === 'si' ? w.si : w.no;
+    document.getElementById('resultNote').innerHTML = ans === 'no'
+      ? 'subjuntivo: ' + w.note
+      : 'indicativo — afirmas algo real';
+    document.getElementById('resultBox').style.display = 'block';
+  }
+
+  function go(dir) {
+    idx = (idx + dir + words.length) % words.length;
+    render();
+  }
+
+  render();
+</script>
+
+</body>
+</html>
