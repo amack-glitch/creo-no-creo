@@ -4,289 +4,316 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>¿Creo o no creo?</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --green: #1a7a5e;
+      --green-light: #e6f5f0;
+      --green-border: #7ecab4;
+      --red: #c0392b;
+      --red-light: #fdf0ee;
+      --red-border: #e8927f;
+      --text: #1a1a1a;
+      --text-muted: #6b7280;
+      --bg: #faf9f6;
+      --card-bg: #ffffff;
+      --border: #e5e0d8;
+      --badge-bg: #f0ede8;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f5f4f0;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 2rem;
+      padding: 2.5rem 1rem 4rem;
     }
 
-    .container {
-      width: 100%;
-      max-width: 580px;
-    }
-
-    .header {
+    header {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
     }
 
-    .header h1 {
-      font-size: 15px;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #888;
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 0.4rem;
     }
 
-    .progress-bar {
-      height: 3px;
-      background: #e0deda;
-      border-radius: 2px;
-      margin-bottom: 2rem;
-      overflow: hidden;
+    header p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-weight: 300;
+      max-width: 380px;
+      line-height: 1.5;
     }
 
-    .progress-fill {
-      height: 100%;
-      background: #7F77DD;
-      border-radius: 2px;
-      transition: width 0.35s ease;
-    }
-
-    .word-card {
-      background: #ffffff;
-      border: 1px solid #e8e6e1;
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 3rem 2rem;
-      text-align: center;
+      padding: 2rem 1.75rem;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+    }
+
+    .topic-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--badge-bg);
+      color: var(--text-muted);
+      padding: 4px 12px;
+      border-radius: 99px;
       margin-bottom: 1.25rem;
     }
 
-    .word-es {
-      font-size: 38px;
-      font-weight: 600;
-      color: #1a1a1a;
-      margin-bottom: 8px;
-      line-height: 1.2;
+    .statement {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.2rem, 4vw, 1.5rem);
+      font-weight: 500;
+      line-height: 1.45;
+      color: var(--text);
+      margin-bottom: 0.5rem;
     }
 
-    .word-en {
-      font-size: 15px;
-      color: #999;
+    .verb-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
       font-style: italic;
+      margin-bottom: 1.75rem;
     }
 
-    .btn-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 1rem;
+    .btns {
+      display: flex;
+      gap: 10px;
     }
 
-    .big-btn {
-      padding: 16px 0;
-      font-size: 17px;
-      font-weight: 600;
-      border-radius: 14px;
-      border: 1.5px solid #ddd;
+    .btn {
+      flex: 1;
+      padding: 0.75rem 0.5rem;
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
       cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text);
       transition: all 0.15s ease;
-      background: #ffffff;
-      color: #1a1a1a;
     }
 
-    .big-btn:hover {
-      background: #f5f4f0;
-      border-color: #bbb;
-      transform: translateY(-1px);
-    }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .btn:active { transform: translateY(0); }
 
-    .big-btn.chosen-si {
-      background: #eaf3de;
-      border-color: #639922;
-      color: #27500a;
-    }
+    .btn-creo { border-color: var(--green); color: var(--green); }
+    .btn-creo:hover { background: var(--green-light); }
+    .btn-creo.selected { background: var(--green-light); border-color: var(--green); }
 
-    .big-btn.chosen-no {
-      background: #fcebeb;
-      border-color: #a32d2d;
-      color: #501313;
-    }
+    .btn-nocreo { border-color: var(--red); color: var(--red); }
+    .btn-nocreo:hover { background: var(--red-light); }
+    .btn-nocreo.selected { background: var(--red-light); border-color: var(--red); }
 
-    .result-box {
-      background: #ffffff;
-      border: 1px solid #e8e6e1;
-      border-radius: 14px;
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 1.25rem;
-      text-align: center;
+    .answer-panel {
+      margin-top: 1rem;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
       animation: fadeIn 0.2s ease;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to   { opacity: 1; transform: translateY(0); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+    .answer-panel.creo-ans { background: var(--green-light); border: 1px solid var(--green-border); }
+    .answer-panel.nocreo-ans { background: var(--red-light); border: 1px solid var(--red-border); }
+
+    .ans-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 5px;
+    }
+    .creo-ans .ans-label { color: var(--green); }
+    .nocreo-ans .ans-label { color: var(--red); }
+
+    .ans-text {
+      font-size: 0.95rem;
+      line-height: 1.55;
+      color: var(--text);
     }
 
-    .result-sentence {
-      font-size: 19px;
-      font-weight: 600;
-      color: #1a1a1a;
-      margin-bottom: 6px;
-      line-height: 1.4;
-    }
-
-    .result-note {
-      font-size: 13px;
-      color: #888;
-    }
-
-    .result-note strong {
-      color: #7F77DD;
-    }
-
-    .nav-row {
+    .nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-top: 1.5rem;
+      width: 100%;
+      max-width: 520px;
     }
-
-    .nav-btn {
-      padding: 8px 18px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      background: #ffffff;
-      color: #444;
-      cursor: pointer;
-      font-size: 14px;
-      transition: all 0.12s;
-    }
-
-    .nav-btn:hover { background: #f5f4f0; }
 
     .counter {
-      font-size: 13px;
-      color: #aaa;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .next-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.5rem 1.25rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .next-btn:hover:not(:disabled) { background: var(--badge-bg); }
+    .next-btn:disabled { opacity: 0.35; cursor: default; }
+
+    .hint-bar {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 0.75rem;
+      min-height: 1.2em;
+      max-width: 520px;
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="header">
+  <header>
     <h1>¿Creo o no creo?</h1>
+    <p>Lee la afirmación y pulsa los dos botones para ver cómo cambia la frase.</p>
+  </header>
+
+  <div class="card">
+    <div class="topic-badge" id="topic-badge"></div>
+    <div class="statement" id="statement"></div>
+    <div class="verb-hint" id="verb-hint"></div>
+
+    <div class="btns">
+      <button class="btn btn-creo" id="btn-creo" onclick="show('creo')">Creo que sí</button>
+      <button class="btn btn-nocreo" id="btn-nocreo" onclick="show('nocreo')">No creo que…</button>
+    </div>
+
+    <div id="creo-panel" class="answer-panel creo-ans" style="display:none">
+      <div class="ans-label">Creo que sí →</div>
+      <div class="ans-text" id="creo-text"></div>
+    </div>
+    <div id="nocreo-panel" class="answer-panel nocreo-ans" style="display:none">
+      <div class="ans-label">No creo que →</div>
+      <div class="ans-text" id="nocreo-text"></div>
+    </div>
   </div>
 
-  <div class="progress-bar">
-    <div class="progress-fill" id="progress"></div>
+  <div class="nav">
+    <span class="counter" id="counter">1 / 24</span>
+    <button class="next-btn" id="next-btn" onclick="next()" disabled>Siguiente →</button>
   </div>
+  <div class="hint-bar" id="hint-bar"></div>
 
-  <div class="word-card">
-    <div class="word-es" id="wordEs"></div>
-    <div class="word-en" id="wordEn"></div>
-  </div>
+  <script>
+    const all = [
+      { topic: "Dios", statement: "Dios existe.", verb: "existir — presente", creo: "Creo que Dios existe.", nocreo: "No creo que Dios exista." },
+      { topic: "Dios", statement: "Dios interviene en la vida de las personas.", verb: "intervenir — presente", creo: "Creo que Dios interviene en la vida de las personas.", nocreo: "No creo que Dios intervenga en la vida de las personas." },
+      { topic: "El karma", statement: "El karma existe y afecta nuestra vida.", verb: "existir / afectar — presente", creo: "Creo que el karma existe y afecta nuestra vida.", nocreo: "No creo que el karma exista ni que afecte nuestra vida." },
+      { topic: "El karma", statement: "Las buenas acciones traen buenas consecuencias.", verb: "traer — presente", creo: "Creo que las buenas acciones traen buenas consecuencias.", nocreo: "No creo que las buenas acciones traigan buenas consecuencias." },
+      { topic: "Los superhéroes", statement: "Podría haber personas con poderes especiales en el mundo real.", verb: "poder — condicional", creo: "Creo que podría haber personas con poderes especiales.", nocreo: "No creo que pueda haber personas con poderes especiales." },
+      { topic: "Los superhéroes", statement: "Los superhéroes son figuras necesarias en la cultura popular.", verb: "ser — presente", creo: "Creo que los superhéroes son figuras necesarias.", nocreo: "No creo que los superhéroes sean figuras necesarias." },
+      { topic: "El amor a primera vista", statement: "El amor a primera vista es posible.", verb: "ser — presente", creo: "Creo que el amor a primera vista es posible.", nocreo: "No creo que el amor a primera vista sea posible." },
+      { topic: "El amor a primera vista", statement: "La gente puede enamorarse en un instante.", verb: "poder — presente", creo: "Creo que la gente puede enamorarse en un instante.", nocreo: "No creo que la gente pueda enamorarse en un instante." },
+      { topic: "La reencarnación", statement: "Las almas se reencarnan en un nuevo cuerpo después de morir.", verb: "reencarnarse — presente", creo: "Creo que las almas se reencarnan en un nuevo cuerpo.", nocreo: "No creo que las almas se reencarnen en un nuevo cuerpo." },
+      { topic: "La reencarnación", statement: "Los recuerdos de vidas pasadas pueden influir en nuestra personalidad.", verb: "poder — presente", creo: "Creo que los recuerdos de vidas pasadas pueden influir.", nocreo: "No creo que los recuerdos de vidas pasadas puedan influir." },
+      { topic: "La vida después de la muerte", statement: "Hay algún tipo de vida después de la muerte.", verb: "haber — presente", creo: "Creo que hay algún tipo de vida después de la muerte.", nocreo: "No creo que haya ningún tipo de vida después de la muerte." },
+      { topic: "La vida después de la muerte", statement: "Las personas que mueren pueden comunicarse con los vivos.", verb: "poder — presente", creo: "Creo que las personas que mueren pueden comunicarse con los vivos.", nocreo: "No creo que las personas que mueren puedan comunicarse con los vivos." },
+      { topic: "Los milagros", statement: "Los milagros ocurren en el mundo real.", verb: "ocurrir — presente", creo: "Creo que los milagros ocurren en el mundo real.", nocreo: "No creo que los milagros ocurran en el mundo real." },
+      { topic: "Los milagros", statement: "Ha ocurrido algún milagro inexplicable en la historia.", verb: "ocurrir — pretérito perfecto", creo: "Creo que ha ocurrido algún milagro inexplicable.", nocreo: "No creo que haya ocurrido ningún milagro inexplicable." },
+      { topic: "La magia", statement: "La magia real existe en alguna forma.", verb: "existir — presente", creo: "Creo que la magia real existe en alguna forma.", nocreo: "No creo que la magia real exista en ninguna forma." },
+      { topic: "La magia", statement: "Ciertas personas pueden manipular energías invisibles.", verb: "poder — presente", creo: "Creo que ciertas personas pueden manipular energías invisibles.", nocreo: "No creo que ciertas personas puedan manipular energías invisibles." },
+      { topic: "La suerte", statement: "La suerte influye en el éxito de las personas.", verb: "influir — presente", creo: "Creo que la suerte influye en el éxito de las personas.", nocreo: "No creo que la suerte influya en el éxito de las personas." },
+      { topic: "La suerte", statement: "Hay personas que tienen más suerte que otras.", verb: "haber — presente", creo: "Creo que hay personas que tienen más suerte que otras.", nocreo: "No creo que haya personas que tengan más suerte que otras." },
+      { topic: "El destino", statement: "El destino de cada persona ya está determinado.", verb: "estar — presente", creo: "Creo que el destino de cada persona ya está determinado.", nocreo: "No creo que el destino de cada persona esté determinado." },
+      { topic: "El destino", statement: "Las personas que se conocen estaban destinadas a encontrarse.", verb: "estar — imperfecto", creo: "Creo que estaban destinadas a encontrarse.", nocreo: "No creo que estuvieran destinadas a encontrarse." },
+      { topic: "Los extraterrestres", statement: "Los extraterrestres existen en algún lugar del universo.", verb: "existir — presente", creo: "Creo que los extraterrestres existen en algún lugar.", nocreo: "No creo que los extraterrestres existan en ningún lugar." },
+      { topic: "Los extraterrestres", statement: "Los extraterrestres han visitado la Tierra.", verb: "visitar — pretérito perfecto", creo: "Creo que los extraterrestres han visitado la Tierra.", nocreo: "No creo que los extraterrestres hayan visitado la Tierra." },
+      { topic: "Los fantasmas", statement: "Los fantasmas existen y pueden aparecer ante los vivos.", verb: "existir / poder — presente", creo: "Creo que los fantasmas existen y pueden aparecer ante los vivos.", nocreo: "No creo que los fantasmas existan ni que puedan aparecer." },
+      { topic: "Los fantasmas", statement: "Hay lugares donde los fantasmas habitan.", verb: "haber — presente", creo: "Creo que hay lugares donde los fantasmas habitan.", nocreo: "No creo que haya lugares donde los fantasmas habiten." },
+    ];
 
-  <div class="btn-row">
-    <button class="big-btn" id="btnSi" onclick="choose('si')">Creo que sí</button>
-    <button class="big-btn" id="btnNo" onclick="choose('no')">No creo que…</button>
-  </div>
+    function shuffle(a) {
+      const b = [...a];
+      for (let i = b.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [b[i], b[j]] = [b[j], b[i]];
+      }
+      return b;
+    }
 
-  <div id="resultBox" class="result-box" style="display:none">
-    <div class="result-sentence" id="resultSentence"></div>
-    <div class="result-note" id="resultNote"></div>
-  </div>
+    let deck = shuffle(all);
+    let idx = 0, seenCreo = false, seenNocreo = false;
 
-  <div class="nav-row">
-    <button class="nav-btn" onclick="go(-1)">← anterior</button>
-    <span class="counter" id="counter"></span>
-    <button class="nav-btn" onclick="go(1)">siguiente →</button>
-  </div>
-</div>
+    function render() {
+      const item = deck[idx];
+      document.getElementById('topic-badge').textContent = item.topic;
+      document.getElementById('statement').textContent = item.statement;
+      document.getElementById('verb-hint').textContent = 'verbo: ' + item.verb;
+      document.getElementById('creo-text').textContent = item.creo;
+      document.getElementById('nocreo-text').textContent = item.nocreo;
+      document.getElementById('creo-panel').style.display = 'none';
+      document.getElementById('nocreo-panel').style.display = 'none';
+      document.getElementById('btn-creo').className = 'btn btn-creo';
+      document.getElementById('btn-nocreo').className = 'btn btn-nocreo';
+      document.getElementById('next-btn').disabled = true;
+      document.getElementById('counter').textContent = (idx + 1) + ' / ' + deck.length;
+      document.getElementById('hint-bar').textContent = '';
+      seenCreo = false;
+      seenNocreo = false;
+    }
 
-<script>
-  const words = [
-    { es: "los fantasmas", en: "ghosts",
-      si: "Creo que los fantasmas existen.",
-      no: "No creo que los fantasmas existan.",
-      note: "existir → <strong>existan</strong>" },
-    { es: "dios", en: "God",
-      si: "Creo que dios existe.",
-      no: "No creo que dios exista.",
-      note: "existir → <strong>exista</strong>" },
-    { es: "el amor a primera vista", en: "love at first sight",
-      si: "Creo que el amor a primera vista es real.",
-      no: "No creo que el amor a primera vista sea real.",
-      note: "ser → <strong>sea</strong>" },
-    { es: "los extraterrestres", en: "aliens",
-      si: "Creo que los extraterrestres existen.",
-      no: "No creo que los extraterrestres existan.",
-      note: "existir → <strong>existan</strong>" },
-    { es: "el destino", en: "destiny / fate",
-      si: "Creo que el destino existe.",
-      no: "No creo que el destino exista.",
-      note: "existir → <strong>exista</strong>" },
-    { es: "la suerte", en: "luck",
-      si: "Creo que la suerte existe.",
-      no: "No creo que la suerte exista.",
-      note: "existir → <strong>exista</strong>" },
-    { es: "la magia", en: "magic",
-      si: "Creo que la magia es real.",
-      no: "No creo que la magia sea real.",
-      note: "ser → <strong>sea</strong>" },
-    { es: "los milagros", en: "miracles",
-      si: "Creo que los milagros ocurren.",
-      no: "No creo que los milagros ocurran.",
-      note: "ocurrir → <strong>ocurran</strong>" },
-    { es: "la vida después de la muerte", en: "life after death",
-      si: "Creo que hay vida después de la muerte.",
-      no: "No creo que haya vida después de la muerte.",
-      note: "hay → <strong>haya</strong>" },
-    { es: "la reencarnación", en: "reincarnation",
-      si: "Creo que la reencarnación es posible.",
-      no: "No creo que la reencarnación sea posible.",
-      note: "ser → <strong>sea</strong>" },
-    { es: "el karma", en: "karma",
-      si: "Creo que el karma existe.",
-      no: "No creo que el karma exista.",
-      note: "existir → <strong>exista</strong>" },
-    { es: "los superhéroes", en: "superheroes",
-      si: "Creo que los superhéroes pueden existir.",
-      no: "No creo que los superhéroes puedan existir.",
-      note: "poder → <strong>puedan</strong>" },
-  ];
+    function show(which) {
+      if (which === 'creo') {
+        seenCreo = true;
+        document.getElementById('creo-panel').style.display = 'block';
+        document.getElementById('btn-creo').className = 'btn btn-creo selected';
+      } else {
+        seenNocreo = true;
+        document.getElementById('nocreo-panel').style.display = 'block';
+        document.getElementById('btn-nocreo').className = 'btn btn-nocreo selected';
+      }
+      if (seenCreo && seenNocreo) {
+        document.getElementById('next-btn').disabled = false;
+        document.getElementById('hint-bar').textContent = '¿Notaste la diferencia entre indicativo y subjuntivo?';
+      } else {
+        const other = which === 'creo' ? '"No creo que…"' : '"Creo que sí"';
+        document.getElementById('hint-bar').textContent = 'Pulsa ' + other + ' para ver la otra respuesta.';
+      }
+    }
 
-  let idx = 0;
-  let chosen = null;
+    function next() {
+      if (idx < deck.length - 1) {
+        idx++;
+      } else {
+        deck = shuffle(all);
+        idx = 0;
+        document.getElementById('hint-bar').textContent = '¡Nueva ronda! Las tarjetas están mezcladas.';
+      }
+      render();
+    }
 
-  function render() {
-    const w = words[idx];
-    document.getElementById('wordEs').textContent = w.es;
-    document.getElementById('wordEn').textContent = w.en;
-    document.getElementById('counter').textContent = (idx + 1) + ' / ' + words.length;
-    document.getElementById('progress').style.width = (((idx + 1) / words.length) * 100) + '%';
-    document.getElementById('resultBox').style.display = 'none';
-    document.getElementById('btnSi').className = 'big-btn';
-    document.getElementById('btnNo').className = 'big-btn';
-    chosen = null;
-  }
-
-  function choose(ans) {
-    if (chosen) return;
-    chosen = ans;
-    const w = words[idx];
-    document.getElementById('btnSi').className = 'big-btn' + (ans === 'si' ? ' chosen-si' : '');
-    document.getElementById('btnNo').className = 'big-btn' + (ans === 'no' ? ' chosen-no' : '');
-    document.getElementById('resultSentence').textContent = ans === 'si' ? w.si : w.no;
-    document.getElementById('resultNote').innerHTML = ans === 'no'
-      ? 'subjuntivo: ' + w.note
-      : 'indicativo — afirmas algo real';
-    document.getElementById('resultBox').style.display = 'block';
-  }
-
-  function go(dir) {
-    idx = (idx + dir + words.length) % words.length;
     render();
-  }
-
-  render();
-</script>
-
+  </script>
 </body>
 </html>
